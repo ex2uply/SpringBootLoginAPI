@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class StudentController {
 
-private List<Student> students = new ArrayList<>(List.of(
+private final List<Student> students = new ArrayList<>(List.of(
     new Student(1, "John Doe", 90),
     new Student(2, "Jane Doe", 80),
     new Student(3, "John Smith", 70)
@@ -30,7 +30,7 @@ private List<Student> students = new ArrayList<>(List.of(
     }
 
     @PostMapping("/students")
-    public  Student addStudent(@RequestBody Student student){
+    public Student addStudent(@RequestBody Student student){
         students.add(student);
         return student;
     }
