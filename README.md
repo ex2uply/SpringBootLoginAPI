@@ -1,79 +1,101 @@
-# User Authentication and Registration System with Spring Boot
+Here’s the updated `README.md` based on your clarification that you're not using Thymeleaf or any UI pages, and that CSRF validation is disabled for API clients:
 
-This project is a robust, full-featured Spring Boot application that demonstrates a secure and scalable user authentication and registration system. It includes functionalities for user registration, password encryption, form-based login, and basic CRUD operations for managing student entities.
+---
 
-## Key Features
+# Spring Boot User Authentication and Registration with JWT
 
-- **User Authentication**: Secured login functionality with Spring Security.
-- **User Registration**: Allows users to register securely with password encryption (BCrypt).
-- **Custom Login Page**: A user-friendly, custom login page for enhanced UX.
-- **CRUD Operations**: Basic Create, Read, Update, and Delete (CRUD) operations for student entities.
-- **CSRF Protection**: Integrated Cross-Site Request Forgery protection to enhance security.
+This project is a Spring Boot application demonstrating user authentication and registration features, with JWT (JSON Web Token) support for secure API access. The application is designed to work only with API clients like Postman, and CSRF protection is disabled to simplify API-based interaction.
 
-## Technology Stack
+## Features
 
-- **Java 21+**
-- **Spring Boot**
-- **Spring Security**
-- **Spring Data JPA**
-- **PostgresSQL**
-- **Maven**
-- **Lombok**
-- **Bcrypt**
+- User authentication using Spring Security
+- User registration with password encryption
+- JWT-based authentication for secure API access
+- Basic CRUD operations for student entities
+- CSRF disabled for easier API interaction
+
+## Technologies Used
+
+- Java
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- JWT (JSON Web Token)
+- Maven
 
 ## Getting Started
 
 ### Prerequisites
 
-Ensure the following software is installed on your machine:
+- Java 17 or higher
+- Maven 3.6.0 or higher
 
-- **Java 17** or higher
-- **Maven 3.6.0** or higher
+### Installation
 
-### Installation Steps
-
-1. Clone the repository to your local machine:
-  ```
+1. Clone the repository:
+    ```
     git clone https://github.com/your-username/spring-boot-user-authentication-registration.git
     cd spring-boot-user-authentication-registration
-  ```
+    ```
 
 2. Build the project using Maven:
-   ```
+    ```
     mvn clean install
-   ```
+    ```
 
 3. Run the application:
-   ```
+    ```
     mvn spring-boot:run
-   ```
+    ```
 
 ### Configuration
 
-The application is pre-configured to use an in-memory Postgres database for development. To modify database settings, update the `application.properties` file located in `src/main/resources`.
+The application uses an in-memory H2 database for development purposes. You can configure the database settings in the `application.properties` file.
 
-## Project Structure Overview
+## JWT Integration
 
-- **`SecurityConfig.java`**: Configures Spring Security, including custom form-based login, session management, and HTTP Basic authentication.
-- **`MyUserDetailsService.java`**: Implements `UserDetailsService` to load user-specific data for authentication.
-- **`UserPrincipal.java`**: Implements `UserDetails`, representing the currently authenticated user.
-- **`RegisterService.java`**: Handles the user registration process, including password encryption using `BCryptPasswordEncoder`.
-- **`UserController.java`**: Manages user-related operations like registration.
-- **`StudentController.java`**: Provides CRUD functionality for student entities, including CSRF token handling for secure form submissions.
+### How JWT Works:
 
-## API Endpoints
+1. **Login**: Users authenticate with their username and password.
+2. **Token Generation**: Upon successful authentication, a JWT token is generated and returned in the response.
+3. **API Access**: For each subsequent API request, the client sends the JWT in the `Authorization` header (Bearer token).
+4. **Token Validation**: The server validates the JWT to ensure the request is authenticated.
 
-- **`/login`**: Custom login page for user authentication.
-- **`/register`**: Endpoint for user registration.
-- **`/students`**: CRUD operations for managing student entities.
-- **`/csrf-token`**: Endpoint to retrieve CSRF tokens for secure requests.
+### Important Files for JWT
+
+- **`JwtUtil.java`**: A utility class to generate, validate, and parse JWT tokens.
+- **`JwtRequestFilter.java`**: A filter that intercepts API requests and validates the JWT token.
+- **`SecurityConfig.java`**: Updated to allow JWT-based authentication and disable CSRF entirely (since the application interacts only via APIs).
+
+### Example JWT Authentication Flow:
+
+1. **Login**: Send a POST request to `/login` with the following JSON body:
+   ```
+   {
+     "username": "your-username",
+     "password": "your-password"
+   }
+   ```
+   Upon successful login, you will receive a JWT token in the response.
+
+2. **Accessing Protected Endpoints**: Include the JWT token in the `Authorization` header to access protected endpoints like `/students`.
+   Example:
+   ```
+   curl -H "Authorization: Bearer <your-token>" -X GET http://localhost:8081/students
+   ```
+
+## Endpoints
+
+- `/login` - Endpoint to authenticate users and generate JWT tokens
+- `/register` - User registration endpoint
+- `/students` - CRUD operations for students, requires JWT for access
 
 ## Example Usage
 
 ### Register a New User
 
-To register a new user, send a POST request to `/register` with the following JSON body:
-```json
+Send a POST request to `/register` with the following JSON body:
+```
 {
   "userid": 1,
   "username": "newuser",
@@ -81,28 +103,31 @@ To register a new user, send a POST request to `/register` with the following JS
 }
 ```
 
-### Login
+### Login and Receive JWT
 
-Access the custom login page at `/login` and enter your credentials to authenticate.
+Send a POST request to `/login`:
+```
+{
+  "username": "your-username",
+  "password": "your-password"
+}
+```
+You will receive a JWT token in the response. Use this token for subsequent requests.
 
-### Student Operations
+### Retrieve Students (JWT Required)
 
-- **Retrieve All Students**: Send a GET request to `/students` to fetch all student records.
-- **Add a New Student**: To add a student, send a POST request to `/students` with a JSON body like:
-  ```json
-  {
-    "id": 4,
-    "name": "New Student",
-    "score": 85
-  }
-  ```
+Send a GET request to `/students` with the JWT token in the `Authorization` header:
+```
+curl -H "Authorization: Bearer <your-token>" -X GET http://localhost:8081/students
+```
 
-## Security Considerations
+### Add a New Student (JWT Required)
 
-- **Password Encryption**: All passwords are encrypted using `BCryptPasswordEncoder` for enhanced security.
-- **CSRF Protection**: The application includes CSRF tokens to mitigate Cross-Site Request Forgery attacks.
-
-## License
-
-This project is licensed under the MIT License.
-
+Send a POST request to `/students` with the JWT token and the following JSON body:
+```
+{
+  "id": 4,
+  "name": "New Student",
+  "score": 85
+}
+```
