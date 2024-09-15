@@ -1,6 +1,3 @@
-Here’s the updated `README.md` based on your clarification that you're not using Thymeleaf or any UI pages, and that CSRF validation is disabled for API clients:
-
----
 
 # Spring Boot User Authentication and Registration with JWT
 
