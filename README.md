@@ -1,15 +1,14 @@
-
 # Spring Boot User Authentication and Registration with JWT
 
-This project is a Spring Boot application demonstrating user authentication and registration features, with JWT (JSON Web Token) support for secure API access. The application is designed to work only with API clients like Postman, and CSRF protection is disabled to simplify API-based interaction.
+This project is a Spring Boot application that demonstrates user authentication and registration, using JWT (JSON Web Token) to secure API access. It's designed for API clients like Postman, with CSRF protection disabled to simplify API interaction.
 
-## Features
+## Key Features
 
-- User authentication using Spring Security
-- User registration with password encryption
-- JWT-based authentication for secure API access
-- Basic CRUD operations for student entities
-- CSRF disabled for easier API interaction
+- User authentication with Spring Security
+- User registration with encrypted passwords
+- JWT-based authentication for secure API requests
+- Basic CRUD operations for managing student data
+- CSRF protection disabled for easier API usage
 
 ## Technologies Used
 
@@ -24,10 +23,10 @@ This project is a Spring Boot application demonstrating user authentication and 
 
 ### Prerequisites
 
-- Java 17 or higher
-- Maven 3.6.0 or higher
+- Java 17 or newer
+- Maven 3.6.0 or later
 
-### Installation
+### Installation Steps
 
 1. Clone the repository:
     ```
@@ -35,7 +34,7 @@ This project is a Spring Boot application demonstrating user authentication and 
     cd spring-boot-user-authentication-registration
     ```
 
-2. Build the project using Maven:
+2. Build the project with Maven:
     ```
     mvn clean install
     ```
@@ -47,52 +46,52 @@ This project is a Spring Boot application demonstrating user authentication and 
 
 ### Configuration
 
-The application uses an in-memory H2 database for development purposes. You can configure the database settings in the `application.properties` file.
+The app uses an in-memory H2 database for development. You can update the database settings in the `application.properties` file as needed.
 
-## JWT Integration
+## JWT Overview
 
 ### How JWT Works:
 
-1. **Login**: Users authenticate with their username and password.
-2. **Token Generation**: Upon successful authentication, a JWT token is generated and returned in the response.
-3. **API Access**: For each subsequent API request, the client sends the JWT in the `Authorization` header (Bearer token).
-4. **Token Validation**: The server validates the JWT to ensure the request is authenticated.
+1. **Login**: Users provide a username and password.
+2. **Token Creation**: Upon successful login, a JWT token is generated and sent back to the user.
+3. **API Access**: The client includes the JWT in the `Authorization` header (as a Bearer token) when making requests.
+4. **Token Verification**: The server checks the JWT on each request to verify the user's identity.
 
-### Important Files for JWT
+### Key JWT Files
 
-- **`JwtUtil.java`**: A utility class to generate, validate, and parse JWT tokens.
-- **`JwtRequestFilter.java`**: A filter that intercepts API requests and validates the JWT token.
-- **`SecurityConfig.java`**: Updated to allow JWT-based authentication and disable CSRF entirely (since the application interacts only via APIs).
+- **`JwtUtil.java`**: Manages generating, validating, and parsing JWT tokens.
+- **`JwtRequestFilter.java`**: Intercepts incoming requests to validate JWT tokens.
+- **`SecurityConfig.java`**: Configures security settings, enabling JWT authentication and disabling CSRF protection.
 
-### Example JWT Authentication Flow:
+### JWT Authentication Flow Example:
 
 1. **Login**: Send a POST request to `/login` with the following JSON body:
-   ```
+   ```json
    {
      "username": "your-username",
      "password": "your-password"
    }
    ```
-   Upon successful login, you will receive a JWT token in the response.
+   After successful login, the server returns a JWT token.
 
-2. **Accessing Protected Endpoints**: Include the JWT token in the `Authorization` header to access protected endpoints like `/students`.
+2. **Accessing Protected Endpoints**: To access secured endpoints like `/students`, send the JWT token in the `Authorization` header.
    Example:
    ```
    curl -H "Authorization: Bearer <your-token>" -X GET http://localhost:8081/students
    ```
 
-## Endpoints
+## Available API Endpoints
 
-- `/login` - Endpoint to authenticate users and generate JWT tokens
-- `/register` - User registration endpoint
-- `/students` - CRUD operations for students, requires JWT for access
+- `/login`: Authenticates users and returns a JWT token.
+- `/register`: Registers new users with encrypted passwords.
+- `/students`: Provides CRUD operations for student data, accessible only with a valid JWT.
 
-## Example Usage
+## Example API Usage
 
 ### Register a New User
 
-Send a POST request to `/register` with the following JSON body:
-```
+Send a POST request to `/register` with this JSON body:
+```json
 {
   "userid": 1,
   "username": "newuser",
@@ -100,28 +99,28 @@ Send a POST request to `/register` with the following JSON body:
 }
 ```
 
-### Login and Receive JWT
+### Login and Get JWT
 
 Send a POST request to `/login`:
-```
+```json
 {
   "username": "your-username",
   "password": "your-password"
 }
 ```
-You will receive a JWT token in the response. Use this token for subsequent requests.
+The response will contain a JWT token. Use this token for subsequent API requests.
 
-### Retrieve Students (JWT Required)
+### Retrieve Students (Requires JWT)
 
 Send a GET request to `/students` with the JWT token in the `Authorization` header:
 ```
 curl -H "Authorization: Bearer <your-token>" -X GET http://localhost:8081/students
 ```
 
-### Add a New Student (JWT Required)
+### Add a New Student (Requires JWT)
 
-Send a POST request to `/students` with the JWT token and the following JSON body:
-```
+Send a POST request to `/students` with your JWT token and this JSON body:
+```json
 {
   "id": 4,
   "name": "New Student",
